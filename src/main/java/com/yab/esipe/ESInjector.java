@@ -49,7 +49,6 @@ public class ESInjector {
 
         File file = new File(fileName);
 
-
         if (file.exists()) {
             LineIterator it;
             try {
@@ -60,7 +59,7 @@ public class ESInjector {
                     IndexRequest request = new IndexRequest(indexName, typeName).source(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json), XContentType.JSON);
                     request.timeout(TimeValue.timeValueSeconds(2L));
                     IndexResponse indexResponse = client.index(request);
-                    System.out.println(indexResponse.status());
+                    logger.trace(indexResponse.getId() + " " + indexResponse.status());
                 }
             } catch (IOException e) {
                 logger.error(e.getLocalizedMessage());

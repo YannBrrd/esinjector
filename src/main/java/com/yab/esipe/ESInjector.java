@@ -23,7 +23,7 @@ public class ESInjector {
 
     private final static Logger logger = LoggerFactory.getLogger(ESInjector.class.getName());
 
-    public ESInjector(String host, int port, String scheme) {
+    private ESInjector(String host, int port, String scheme) {
         client = connect(host, port, scheme);
     }
 
@@ -35,7 +35,7 @@ public class ESInjector {
                 ));
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         ESInjector ei = new ESInjector("localhost", 9200, "http");
 
         ei.index("/Users/yann/Documents/projects/datagen/data.json", "logstash-bank", "customers");
@@ -43,7 +43,7 @@ public class ESInjector {
         System.exit(1);
     }
 
-    public boolean index(String fileName, String indexName, String typeName) {
+    private boolean index(String fileName, String indexName, String typeName) {
         boolean res = false;
         ObjectMapper mapper = new ObjectMapper();
 
@@ -54,17 +54,13 @@ public class ESInjector {
             LineIterator it;
             try {
                 it = FileUtils.lineIterator(file, "UTF-8");
-                try {
-                    while (it.hasNext()) {
-                        String line = it.nextLine();
-                        JsonNode json = mapper.readTree(line);
-                        IndexRequest request = new IndexRequest(indexName, typeName).source(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json), XContentType.JSON);
-                        request.timeout(TimeValue.timeValueSeconds(2L));
-                        IndexResponse indexResponse = client.index(request);
-                        System.out.println(indexResponse.status());
-                    }
-                } finally {
-                    LineIterator.closeQuietly(it);
+                while (it.hasNext()) {
+                    String line = it.nextLine();
+                    JsonNode json = mapper.readTree(line);
+                    IndexRequest request = new IndexRequest(indexName, typeName).source(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json), XContentType.JSON);
+                    request.timeout(TimeValue.timeValueSeconds(2L));
+                    IndexResponse indexResponse = client.index(request);
+                    System.out.println(indexResponse.status());
                 }
             } catch (IOException e) {
                 logger.error(e.getLocalizedMessage());

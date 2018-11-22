@@ -38,8 +38,11 @@ public class ESInjector {
     public static void main(String[] args) {
         ESInjector ei = new ESInjector("localhost", 9200, "http");
 
-        ei.index("/Users/yann/Documents/projects/datagen/data.json", "logstash-bank", "customers");
-        System.out.println("Indexing done");
+        if (ei.index("/Users/yann/Documents/projects/datagen/data.json", "logstash-bank", "customers"))
+            System.out.println("Indexing done");
+        else
+            System.out.println("Indexing KO");
+
         System.exit(1);
     }
 

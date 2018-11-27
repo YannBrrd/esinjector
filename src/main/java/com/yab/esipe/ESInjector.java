@@ -64,10 +64,10 @@ public class ESInjector {
                     IndexResponse indexResponse = client.index(request);
                     logger.trace(indexResponse.getId() + " " + indexResponse.status());
                 }
+                res = true;
             } catch (IOException e) {
                 logger.error(e.getLocalizedMessage());
             }
-            res = true;
         }
         return res;
     }
